@@ -103,8 +103,6 @@ async def start(client, message):
             InlineKeyboardButton('💁‍♀️ ʜᴇʟᴘ', callback_data='help'),
             InlineKeyboardButton('😊 ᴀʙᴏᴜᴛ', callback_data='about')
         ]]
-        if CLONE_MODE == True:
-            buttons.append([InlineKeyboardButton('🤖 ᴄʀᴇᴀᴛᴇ ʏᴏᴜʀ ᴏᴡɴ ᴄʟᴏɴᴇ ʙᴏᴛ', callback_data='clone')])
         reply_markup = InlineKeyboardMarkup(buttons)
         me = client.me
         await message.reply_photo(
@@ -387,8 +385,6 @@ async def cb_handler(client: Client, query: CallbackQuery):
             InlineKeyboardButton('💁‍♀️ ʜᴇʟᴘ', callback_data='help'),
             InlineKeyboardButton('😊 ᴀʙᴏᴜᴛ', callback_data='about')
         ]]
-        if CLONE_MODE == True:
-            buttons.append([InlineKeyboardButton('🤖 ᴄʀᴇᴀᴛᴇ ʏᴏᴜʀ ᴏᴡɴ ᴄʟᴏɴᴇ ʙᴏᴛ', callback_data='clone')])
         reply_markup = InlineKeyboardMarkup(buttons)
         await client.edit_message_media(
             query.message.chat.id, 
@@ -406,27 +402,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
 # Subscribe YouTube Channel For Amazing Bot https://youtube.com/@Tech_VJ
 # Ask Doubt on telegram @KingVJ01
     
-    elif query.data == "clone":
-        buttons = [[
-            InlineKeyboardButton('Hᴏᴍᴇ', callback_data='start'),
-            InlineKeyboardButton('🔒 Cʟᴏsᴇ', callback_data='close_data')
-        ]]
-        await client.edit_message_media(
-            query.message.chat.id, 
-            query.message.id, 
-            InputMediaPhoto(random.choice(PICS))
-        )
-        reply_markup = InlineKeyboardMarkup(buttons)
-        await query.message.edit_text(
-            text=script.CLONE_TXT.format(query.from_user.mention),
-            reply_markup=reply_markup,
-            parse_mode=enums.ParseMode.HTML
-        )          
 
-# Don't Remove Credit Tg - @VJ_Bots
-# Subscribe YouTube Channel For Amazing Bot https://youtube.com/@Tech_VJ
-# Ask Doubt on telegram @KingVJ01
-    
     elif query.data == "help":
         buttons = [[
             InlineKeyboardButton('Hᴏᴍᴇ', callback_data='start'),
