@@ -103,15 +103,18 @@ async def start(client, message):
 # Ask Doubt on telegram @KingVJ01
     
     data = message.command[1]
-        if not await check_force_sub(client, message, data):
-        return
+    if not await check_force_sub(client, message, data):
+    return
+    
     try:
-        pre, file_id = data.split('_', 1)
-    except:
-        file_id = data
-        pre = ""   
+         pre, file_id = (
+            base64.urlsafe_b64decode(data + "=" * (-len(data) % 4))
+            .decode("ascii")
+            .split("_", 1)
+        )
+    except Exception:
+        return await message.reply_text("<b>Invalid or expired link.</b>", protect_content=True)
 
-    pre, file_id = ((base64.urlsafe_b64decode(data + "=" * (-len(data) % 4))).decode("ascii")).split("_", 1)
     try:
         msg = await client.send_cached_media(
             chat_id=message.from_user.id,
@@ -120,22 +123,31 @@ async def start(client, message):
         )
         filetype = msg.media
         file = getattr(msg, filetype.value)
-        title = '@VJ_Bots  ' + ' '.join(filter(lambda x: not x.startswith('[') and not x.startswith('@'), file.file_name.split()))
-        size=get_size(file.file_size)
+        title = '@VJ_Bots  ' + ' '.join(
+            filter(lambda x: not x.startswith('[') and not x.startswith('@'), file.file_name.split())
+        )
+        size = get_size(file.file_size)
         f_caption = f"<code>{title}</code>"
         if CUSTOM_FILE_CAPTION:
             try:
-                f_caption=CUSTOM_FILE_CAPTION.format(file_name= '' if title is None else title, file_size='' if size is None else size, file_caption='')
-            except:
+                f_caption = CUSTOM_FILE_CAPTION.format(
+                    file_name='' if title is None else title,
+                    file_size='' if size is None else size,
+                    file_caption=''
+                )
+            except Exception:
                 return
         await msg.edit_caption(f_caption)
-        k = await msg.reply(f"<b><u>❗️❗️❗️IMPORTANT❗️️❗️❗️</u></b>\n\nThis Movie File/Video will be deleted in <b><u>{AUTO_DELETE} mins</u> 🫥 <i></b>(Due to Copyright Issues)</i>.\n\n<b><i>Please forward this File/Video to your Saved Messages and Start Download there</i></b>",quote=True)
+               k = await msg.reply(
+            f"<b><u>❗️❗️❗️IMPORTANT❗️️❗️❗️</u></b>\n\nThis Movie File/Video will be deleted in <b><u>{AUTO_DELETE} mins</u> 🫥 <i></b>(Due to Copyright Issues)</i>.\n\n<b><i>Please forward this File/Video to your Saved Messages and Start Download there</i></b>",
+            quote=True,
+        )
         await asyncio.sleep(AUTO_DELETE_TIME)
         await msg.delete()
         await k.edit_text("<b>Your File/Video is successfully deleted!!!</b>")
         return
-    except:
-        pass
+    except Exception:
+        return await message.reply_text("<b>Unable to fetch this file from the link.</b>", protect_content=True)
         
 # Don't Remove Credit Tg - @VJ_Bots
 # Subscribe YouTube Channel For Amazing Bot https://youtube.com/@Tech_VJ
