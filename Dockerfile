@@ -8,13 +8,13 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends git \
     && rm -rf /var/lib/apt/lists/*
 
-RUN apt update && apt upgrade -y
-RUN apt install git -y
 COPY requirements.txt /requirements.txt
 
-RUN cd /
-RUN pip3 install -U pip && pip3 install -U -r requirements.txt
+RUN pip3 install --no-cache-dir -U pip \
+    && pip3 install --no-cache-dir -U -r /requirements.txt
+
 RUN mkdir /VJ-File-Store
 WORKDIR /VJ-File-Store
 COPY . /VJ-File-Store
+
 CMD ["python", "bot.py"]
