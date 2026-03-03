@@ -48,6 +48,11 @@ AUTO_DELETE_TIME = int(environ.get("AUTO_DELETE_TIME", "1800")) # Time in Second
 # Channel Information
 LOG_CHANNEL = int(environ.get("LOG_CHANNEL", ""))
 
+# Force Subscribe Settings
+FORCE_SUB_MODE = is_enabled((environ.get('FORCE_SUB_MODE', "False")), False)
+FORCE_SUB_CHANNEL = environ.get("FORCE_SUB_CHANNEL", "")
+FORCE_SUB_REQUEST_MODE = is_enabled((environ.get('FORCE_SUB_REQUEST_MODE', "True")), True)
+
 # File Caption Information
 CUSTOM_FILE_CAPTION = environ.get("CUSTOM_FILE_CAPTION", f"{script.CAPTION}")
 BATCH_FILE_CAPTION = environ.get("BATCH_FILE_CAPTION", CUSTOM_FILE_CAPTION)
