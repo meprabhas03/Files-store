@@ -37,6 +37,9 @@
 - `CLONE_DB_URI` : Mongodb Database Url For Clone Bot [Tutorial Watch Here](https://youtu.be/DAHRmFdw99o)
 - `ADMINS` : It mean Admin/Owner Id For Broadcasting Message.
 - `LOG_CHANNEL` : Log channel id start with -100xxxxxx
+- `FORCE_SUB_MODE` : Set `True` to force users to subscribe before getting files.
+- `FORCE_SUB_CHANNEL` : Channel username/id used for force subscribe checks.
+- `FORCE_SUB_REQUEST_MODE` : Set `True` to generate join-request invite links instead of direct join links.
 - `URL` : Your Server App Link With https:// and in last make sure one / is given.
 - `AUTO_DELETE` : Time In Minutes
 - `AUTO_DELETE_TIME` : Time In Seconds
