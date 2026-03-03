@@ -12,8 +12,8 @@ from clone_plugins.dbusers import clonedb
 from clone_plugins.users_api import get_user, update_user_info
 from pyrogram import Client, filters, enums
 from plugins.clone import mongo_db
-from pyrogram.errors import ChatAdminRequired, FloodWait
-from config import BOT_USERNAME, ADMINS
+from pyrogram.errors import ChatAdminRequired, FloodWait, UserNotParticipant
+from config import BOT_USERNAME, ADMINS, FORCE_SUB_MODE, FORCE_SUB_CHANNEL, FORCE_SUB_REQUEST_MODE
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message, CallbackQuery, InputMediaPhoto
 from config import PICS, CUSTOM_FILE_CAPTION, AUTO_DELETE_TIME, AUTO_DELETE
 import re
@@ -21,6 +21,41 @@ import json
 import base64
 
 logger = logging.getLogger(__name__)
+
+
+async def check_force_sub(client, message, payload):
+    if not FORCE_SUB_MODE or not FORCE_SUB_CHANNEL:
+        return True
+
+    try:
+        member = await client.get_chat_member(FORCE_SUB_CHANNEL, message.from_user.id)
+        if member.status in [enums.ChatMemberStatus.LEFT, enums.ChatMemberStatus.BANNED]:
+            raise UserNotParticipant("User is not subscribed")
+        return True
+    except Exception:
+        invite_link = None
+        if FORCE_SUB_REQUEST_MODE:
+            try:
+                invite = await client.create_chat_invite_link(FORCE_SUB_CHANNEL, creates_join_request=True)
+                invite_link = invite.invite_link
+            except Exception as e:
+                logger.warning(f"Failed to create request invite link: {e}")
+
+        if not invite_link and str(FORCE_SUB_CHANNEL).startswith("@"):
+            invite_link = f"https://t.me/{str(FORCE_SUB_CHANNEL).lstrip('@')}"
+
+        buttons = []
+        if invite_link:
+            join_text = "📢 Request to Join Channel" if FORCE_SUB_REQUEST_MODE else "📢 Join Channel"
+            buttons.append([InlineKeyboardButton(join_text, url=invite_link)])
+        buttons.append([InlineKeyboardButton("🔄 Try Again", url=f"https://t.me/{client.me.username}?start={payload}")])
+
+        await message.reply_text(
+            "<b>You need approved channel subscription to use this link.\nPlease join/request first, wait for approval, then try again.</b>",
+            reply_markup=InlineKeyboardMarkup(buttons),
+            protect_content=True
+        )
+        return False
 
 # Don't Remove Credit Tg - @VJ_Bots
 # Subscribe YouTube Channel For Amazing Bot https://youtube.com/@Tech_VJ
@@ -68,6 +103,8 @@ async def start(client, message):
 # Ask Doubt on telegram @KingVJ01
     
     data = message.command[1]
+        if not await check_force_sub(client, message, data):
+        return
     try:
         pre, file_id = data.split('_', 1)
     except:
